@@ -68,15 +68,15 @@ pub fn update() -> Result<()> {
     if fs::exists(CARGO_TOML_FILE_NAME)? {
         shell::print_status("Running", "cargo update");
         if Command::new(CARGO_PROGRAM).arg(UPDATE_COMMAND).status()?.success() {
-            shell::print_status("Reading", format!("`{}`", CARGO_TOML_FILE_NAME));
+            shell::print_status("Reading", format!("`{CARGO_TOML_FILE_NAME}`"));
             let cargo_toml = fs::read_to_string(CARGO_TOML_FILE_NAME)?.parse::<Document<String>>()?;
-            let toml_packages = get_dependencies(cargo_toml);
+            let toml_packages = get_dependencies(&cargo_toml);
             
             if fs::exists(CARGO_LOCK_FILE_NAME)? {
-                shell::print_status("Reading", format!("`{}`", CARGO_LOCK_FILE_NAME));
+                shell::print_status("Reading", format!("`{CARGO_LOCK_FILE_NAME}`"));
                 let cargo_lock = fs::read_to_string(CARGO_LOCK_FILE_NAME)?.parse::<Document<String>>()?;
                 if let Some(packages) = get_toml_array_of_tables!(cargo_lock, PACKAGE_KEY) {
-                    for package in packages.iter() {
+                    for package in packages {
                         if let Some(name) = get_toml_str!(package, NAME_KEY)
                             && toml_packages.contains_key(name)
                             && let Some(version) = get_toml_str!(package, VERSION_KEY)
@@ -85,7 +85,7 @@ pub fn update() -> Result<()> {
                             && let Some(dependency_version) = &dependecy.version
                             && dependency_version.cmp_precedence(&version).is_lt()
                         {
-                            shell::print_status("Updating", format!("{} v{} -> v{}", name, dependency_version, version));
+                            shell::print_status("Updating", format!("{name} v{dependency_version} -> v{version}"));
                             Command::new(CARGO_PROGRAM).arg(RM_COMMAND).arg(name).status()?;
                             let mut add_command = Command::new(CARGO_PROGRAM);
                             add_command.arg(ADD_COMMAND).arg(name);
@@ -106,7 +106,7 @@ pub fn update() -> Result<()> {
     }
 }
 
-fn get_dependencies(cargo_toml: Document<String>) -> HashMap<String, Dependency> {
+fn get_dependencies(cargo_toml: &Document<String>) -> HashMap<String, Dependency> {
     let mut toml_packages = HashMap::new();
     if let Some(dependencies) = get_toml_table!(cargo_toml, DEPENDENCIES_KEY) {
         for (key, value) in dependencies.get_values() {
@@ -127,12 +127,10 @@ fn get_dependencies(cargo_toml: Document<String>) -> HashMap<String, Dependency>
                         }
                         dependency.features = Some(dependency_features);
                     }
-                } else {
-                    if let Some(value) = value.as_str()
-                        && let Ok(version) = Version::parse(value)
-                    {
-                        dependency.version = Some(version);
-                    }
+                } else if let Some(value) = value.as_str()
+                    && let Ok(version) = Version::parse(value)
+                {
+                    dependency.version = Some(version);
                 }
                 toml_packages.insert(key.get().to_owned(), dependency);
             }
