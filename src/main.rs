@@ -3,6 +3,7 @@ mod shell;
 
 use clap::{Parser, Subcommand};
 
+/// Shipping Instructions (SI) - a helper tool for Cargo
 #[derive(Parser)]
 #[command(arg_required_else_help = true, version)]
 struct Cli {
@@ -12,6 +13,7 @@ struct Cli {
 
 #[derive(Subcommand, Clone)]
 enum Command {
+    /// Run cargo-update and then update dependencies in the manifest that are behind the versions recorded in the local lock file
     Update,
 }
 

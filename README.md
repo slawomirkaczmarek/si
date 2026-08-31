@@ -1,2 +1,2 @@
 # si
-Shipping Instructions (SI) - helper tool for Cargo
+Shipping Instructions (SI) - a helper tool for Cargo

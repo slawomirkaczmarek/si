@@ -66,7 +66,7 @@ macro_rules! get_toml_array_of_tables {
 
 pub fn update() -> Result<()> {
     if fs::exists(CARGO_TOML_FILE_NAME)? {
-        shell::print_status("Running", "cargo update");
+        shell::print_status("Running", "cargo-update");
         if Command::new(CARGO_PROGRAM).arg(UPDATE_COMMAND).status()?.success() {
             shell::print_status("Reading", format!("`{CARGO_TOML_FILE_NAME}`"));
             let cargo_toml = fs::read_to_string(CARGO_TOML_FILE_NAME)?.parse::<Document<String>>()?;
