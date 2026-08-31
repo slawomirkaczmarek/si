@@ -10,5 +10,5 @@ pub fn print_status(status: impl Display, message: impl Display) {
 }
 
 pub fn print_error(status: impl Display, message: impl Display) {
-    anstream::println!("{ERROR_STYLE}{:>12}{ERROR_STYLE:#} {}", status, message);
+    anstream::eprintln!("{ERROR_STYLE}{:>12}{ERROR_STYLE:#} {}", status, message);
 }
