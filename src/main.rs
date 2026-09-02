@@ -3,7 +3,7 @@ mod shell;
 
 use clap::{Parser, Subcommand};
 
-/// Shipping Instructions (SI) - a helper tool for Cargo
+/// Shipping Instructions (SI), a helper tool for Cargo
 #[derive(Parser)]
 #[command(arg_required_else_help = true, version)]
 struct Cli {
