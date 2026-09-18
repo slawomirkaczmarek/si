@@ -99,7 +99,7 @@ pub fn update() -> Result<()> {
             }
             Ok(())
         } else {
-            Err(anyhow!("cargo update failed"))
+            Err(anyhow!("cargo-update failed"))
         }
     } else {
         Err(anyhow!("could not find `{}` in `{}` directory", CARGO_TOML_FILE_NAME, env::current_dir()?.display()))
